@@ -1,6 +1,7 @@
 use std::{mem::swap, ops};
 // used for comparing floats
 use float_cmp::{approx_eq, F32Margin};
+use rand::Rng;
 
 use super::{Mat4, Quaternion};
 
@@ -181,6 +182,28 @@ impl Vector {
 
     pub fn lerp(a: &Vector, b: &Vector, t: f32) -> Vector {
         *a * (1.0 - t) + *b * t
+    }
+
+    /// generates a random vector that is maximally max_angle_rad away from the given direction
+    pub fn random_around_direction(direction: &Vector, max_angle_rad: f32) -> Vector {
+        let radius: f32 = max_angle_rad.tan(); // let's construct a circle perpendicular to the direction vector with a radius of tan of the max angle
+        let center_of_circle = direction; // its at the end of a vector
+        let mut rng = rand::thread_rng();
+        let x = rng.gen_range(-1.0..1.0);
+        let y = rng.gen_range(-1.0..1.0);
+        let z = rng.gen_range(-1.0..1.0);
+
+        // create a random vector with a length of radius which can be in any direction on a hemisphere with a radius (if the vector is normalized)
+        let mut random_vector = Vector::new(x, y, z);
+        random_vector.normalize();
+        let mut random_vector = random_vector * radius; 
+        // check if it lies on a hemisphere above the direction vector
+        if random_vector.dot(direction) < 0.0 {
+            random_vector = -random_vector;
+        }
+        let mut random_vector = *center_of_circle + random_vector;
+        random_vector.normalize();
+        random_vector
     }
 }
 
