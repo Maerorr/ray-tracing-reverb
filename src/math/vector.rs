@@ -205,6 +205,16 @@ impl Vector {
         random_vector.normalize();
         random_vector
     }
+
+    pub fn random_on_sphere() -> Vector {
+        let mut rng = rand::thread_rng();
+        let x = rng.gen_range(-1.0..1.0);
+        let y = rng.gen_range(-1.0..1.0);
+        let z = rng.gen_range(-1.0..1.0);
+        let mut random_vector = Vector::new(x, y, z);
+        random_vector.normalize();
+        random_vector
+    }
 }
 
 // + operator overload
